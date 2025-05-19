@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Модуль тестирования по математике</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito :wght@400;700&display=swap" />
+  <style>
+    /* === Базовые стили (без изменений) === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #e6f0fa;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: #2a73cc;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      font-size: 1.7rem;
+    }
+    nav a {
+      margin-left: 1.5rem;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #a9d1ff;
+    }
+    .login-btn {
+      background: white;
+      color: #2a73cc;
+      border: none;
+      padding: 0.4rem 1.1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+    .login-btn:hover {
+      background-color: #cce3ff;
+    }
+    .login-popup {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background: white;
+      padding: 1.3rem 1.5rem;
+      border: 1.5px solid #2a73cc;
+      border-radius: 10px;
+      width: 280px;
+      z-index: 1100;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+    .hidden {
+      display: none;
+    }
+    .login-popup h3 {
+      margin-bottom: 0.8rem;
+      color: #2a73cc;
+      font-weight: 700;
+      text-align: center;
+    }
+    .login-popup input {
+      width: 100%;
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 0.8rem;
+      border: 1.3px solid #2a73cc;
+      border-radius: 6px;
+      font-size: 1rem;
+      outline-color: #2a73cc;
+    }
+    .login-popup button {
+      width: 100%;
+      padding: 0.5rem;
+      background: #2a73cc;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .login-popup button:hover {
+      background-color: #164f9e;
+    }
+
+    /* === Улучшенные стили для справочных материалов === */
+    .reference-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .reference-card {
+      background: #f8faff;
+      border-left: 4px solid #2a73cc;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(42, 115, 204, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .reference-card:hover {
+      transform: translateY(-3px);
+    }
+    .reference-card h3 {
+      color: #1e90ff;
+      margin-bottom: 0.5rem;
+    }
+    .reference-card ul {
+      padding-left: 1.2rem;
+    }
+    .reference-card li {
+      margin-bottom: 0.3rem;
+    }
+    .more-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #2a73cc;
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px dashed #2a73cc;
+      transition: all 0.3s ease;
+    }
+    .more-link:hover {
+      color: #164f9e;
+      border-color: #164f9e;
+    }
+
+    /* === Улучшенные стили для главной страницы === */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .feature-card {
+      background: #f0f8ff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(42, 115, 204, 0.1);
+      border-left: 4px solid #2a73cc;
+      transition: transform 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-3px);
+    }
+    .feature-icon {
+      font-size: 2rem;
+      color: #2a73cc;
+      margin-bottom: 0.5rem;
+    }
+
+    /* === Стандартные стили (без изменений) === */
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(42, 115, 204, 0.2);
+    }
+    .slider {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(42, 115, 204, 0.25);
+      margin-bottom: 2rem;
+      max-height: 320px;
+    }
+    .slider img {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      display: none;
+      transition: opacity 0.6s ease-in-out;
+    }
+    .slider img.active {
+      display: block;
+      opacity: 1;
+    }
+    .slider-controls {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+    }
+    .slider-controls button {
+      background: rgba(255, 255, 255, 0.7);
+      border: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .slider-controls button.active {
+      background: #2a73cc;
+    }
+    h2 {
+      color: #2a73cc;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      font-size: 1.6rem;
+      border-bottom: 2px solid #2a73cc;
+      padding-bottom: 6px;
+    }
+    p {
+      margin-bottom: 1rem;
+      line-height: 1.5;
+      font-size: 1.1rem;
+    }
+    .question {
+      background: #f0f8ff;
+      border: 1.5px solid #2a73cc;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+    }
+    .question h3 {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #2a73cc;
+    }
+    .question ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .question ul li {
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
+      border: 1.2px solid #2a73cc;
+      background: white;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .question ul li:hover {
+      background-color: #cce3ff;
+    }
+    input[type="text"], input[type="number"] {
+      padding: 0.4rem 0.7rem;
+      font-size: 1rem;
+      border: 1.3px solid #2a73cc;
+      border-radius: 6px;
+      outline-color: #2a73cc;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background: #2a73cc;
+      color: white;
+      padding: 0.5rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #164f9e;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .admin-panel {
+      background: #fff8dc;
+      border: 1.5px solid #ffd966;
+      padding: 1rem 1.3rem;
+      border-radius: 10px;
+      margin-top: 1.5rem;
+    }
+    #test-config {
+      background: #f0f8ff;
+      padding: 1rem 1.3rem;
+      border-radius: 10px;
+      border: 1.5px solid #2a73cc;
+      margin-bottom: 1.5rem;
+    }
+    #test-result {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      color: #2a73cc;
+    }
+
+    /* === Расширенный футер === */
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-section {
+      flex: 1 1 200px;
+      min-width: 200px;
+    }
+    .footer-section h4 {
+      color: white;
+      margin-bottom: 0.8rem;
+      font-size: 1rem;
+    }
+    .footer-links a {
+      display: block;
+      color: #e6f0fa;
+      text-decoration: none;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s ease;
+    }
+    .footer-links a:hover {
+      color: #a9d1ff;
+    }
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .social-icons a {
+      color: white;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+    .social-icons a:hover {
+      color: #a9d1ff;
+    }
+  </style>
+</head>
+<body>
+  <!-- Хедер -->
+  <header>
+    <h1>Математическое тестирование</h1>
+    <nav>
+      <a href="#" onclick="showHome()">Главная</a>
+      <a href="#" onclick="showTestPanel()">Тест</a>
+      <a href="#" onclick="showReferenceMaterial()">Справочные материалы</a>
+      <a href="#" onclick="showAdminPanel()">Администрирование</a>
+    </nav>
+    <button class="login-btn" onclick="toggleLoginPopup()">Вход</button>
+  </header>
+
+  <!-- Форма входа -->
+  <div class="login-popup hidden" id="login-popup">
+    <h3>Вход в систему</h3>
+    <input type="text" id="login" placeholder="Логин" autocomplete="username" />
+    <input type="password" id="password" placeholder="Пароль" autocomplete="current-password" />
+    <button onclick="loginUser()">Войти</button>
+  </div>
+
+  <!-- Основной контент -->
+  <main>
+    <!-- Главная страница -->
+    <section id="home-block">
+      <h2>Добро пожалуйте на платформу!</h2>
+      <p>Здесь вы можете пройти тесты по математике, получить обратную связь и изучить справочные материалы.</p>
+      
+      <!-- Улучшенный слайдер -->
+      <div class="slider" id="slider">
+        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=80 " class="active" alt="Учебники 1" />
+        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=80 " alt="Учебники 2" />
+        <img src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=900&q=80 " alt="Учебники 3" />
+        <div class="slider-controls" id="slider-controls"></div>
+      </div>
+
+      <!-- Дополнительная информация на главной -->
+      <h2>О платформе</h2>
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">📘</div>
+          <h3>Образцы заданий</h3>
+          <p>Типовые задания, аналогичные тем, что встречаются в реальных тестах</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Анализ результатов</h3>
+          <p>После прохождения тестов вы получите подробный разбор ошибок</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⏱️</div>
+          <h3>Режим времени</h3>
+          <p>Возможность тренировки в условиях ограниченного времени</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📚</div>
+          <h3>Справочный материал</h3>
+          <p>Краткие теоретические справочники по всем темам математики</p>
+        </div>
+      </div>
+
+      <p>Платформа позволяет создавать, проходить и анализировать тесты по математике с удобным интерфейсом и разными типами заданий.</p>
+      <p>Учитесь эффективно, проверяйте свои знания и получайте полезные рекомендации!</p>
+    </section>
+
+    <!-- Улучшенные справочные материалы -->
+    <section id="reference-panel" class="hidden">
+      <h2>Справочные материалы для 1-2 курсов</h2>
+      
+      <div class="reference-cards">
+        <div class="reference-card">
+          <h3>Алгебра</h3>
+          <ul>
+            <li>Квадратные уравнения: ax² + bx + c = 0</li>
+            <li>Формула дискриминанта: D = b² - 4ac</li>
+            <li>Свойства степеней: aⁿ × aᵐ = aⁿ⁺ᵐ</li>
+            <li>Формулы сокращенного умножения</li>
+          </ul>
+          <a href="#" class="more-link">Подробнее →</a>
+        </div>
+        
+        <div class="reference-card">
+          <h3>Геометрия</h3>
+          <ul>
+            <li>Теорема Пифагора: c² = a² + b²</li>
+            <li>Площадь треугольника: S = ½ah</li>
+            <li>Площадь круга: S = πr²</li>
+            <li>Объем цилиндра: V = πr²h</li>
+          </ul>
+          <a href="#" class="more-link">Подробнее →</a>
+        </div>
+        
+        <div class="reference-card">
+          <h3>Тригонометрия</h3>
+          <ul>
+            <li>Основные тождества: sin²x + cos²x = 1</li>
+            <li>Формулы приведения</li>
+            <li>Таблица значений тригонометрических функций</li>
+            <li>Решение простейших уравнений</li>
+          </ul>
+          <a href="#" class="more-link">Подробнее →</a>
+        </div>
+        
+        <div class="reference-card">
+          <h3>Функции и графики</h3>
+          <ul>
+            <li>Линейная функция: y = kx + b</li>
+            <li>Квадратичная функция: y = ax² + bx + c</li>
+            <li>Графики тригонометрических функций</li>
+            <li>Преобразования графиков</li>
+          </ul>
+          <a href="#" class="more-link">Подробнее →</a>
+        </div>
+        
+        <div class="reference-card">
+          <h3>Уравнения и неравенства</h3>
+          <ul>
+            <li>Линейные уравнения: ax + b = 0</li>
+            <li>Квадратные уравнения: ax² + bx + c = 0</li>
+            <li>Системы уравнений</li>
+            <li>Рациональные неравенства</li>
+          </ul>
+          <a href="#" class="more-link">Подробнее →</a>
+        </div>
+        
+        <div class="reference-card">
+          <h3>Производные и интегралы</h3>
+          <ul>
+            <li>Определение производной: f'(x) = lim(h→0) (f(x+h)-f(x))/h</li>
+            <li>Правила дифференцирования</li>
+            <li>Интеграл как площадь под кривой</li>
+            <li>Формула Ньютона-Лейбница</li>
+          </ul>
+          <a href="#" class="more-link">Подробнее →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Панель преподавателя -->
+    <section id="teacher-panel" class="hidden">
+      <h2>Панель преподавателя</h2>
+      <p><strong>Добавить новый вопрос:</strong></p>
+      <input id="question-text" placeholder="Текст вопроса" />
+      <select id="question-type" style="margin: 0.7rem 0;">
+        <option value="single">Один правильный ответ</option>
+        <option value="multiple">Несколько правильных ответов</option>
+        <option value="text">Текстовый / числовой ответ</option>
+      </select>
+      <input id="answer-options" placeholder="Варианты ответов (через ;)" />
+      <input id="correct-answer" placeholder="Правильный ответ (через ; для нескольких)" />
+      <button onclick="addQuestion()">Добавить вопрос</button>
+      <h3>Список вопросов:</h3>
+      <ul id="question-list"></ul>
+    </section>
+
+    <!-- Панель ученика / тест -->
+    <section id="student-panel" class="hidden">
+      <h2>Настройка и прохождение теста</h2>
+      <div id="test-config">
+        <label>Количество вопросов:
+          <input type="number" id="num-questions" min="1" max="20" value="5" />
+        </label>
+        <label style="margin-left: 15px;">
+          Ограничение по времени:
+          <input type="number" id="time-limit" min="0" max="60" value="0" />
+        </label>
+        <label style="margin-left: 15px;">
+          <input type="checkbox" id="shuffle-questions" checked />
+          Перемешать вопросы
+        </label>
+        <button style="margin-left: 15px;" onclick="startTest()">Начать тест</button>
+      </div>
+      <form id="test-form" class="hidden" onsubmit="return false;">
+        <div id="test-questions"></div>
+        <button onclick="submitTest()">Отправить ответы</button>
+      </form>
+    </section>
+
+    <!-- Результат теста -->
+    <section id="result-panel" class="hidden">
+      <h2>Результаты теста</h2>
+      <p id="test-result"></p>
+      <p><strong>Рекомендации:</strong> изучите справочные материалы по вопросам, в которых были ошибки.</p>
+      <button onclick="showTestPanel()">Пройти тест заново</button>
+    </section>
+
+    <!-- Админ-панель -->
+    <section id="admin-panel" class="hidden admin-panel">
+      <h2>Панель администратора</h2>
+      <p><strong>Пользователи системы:</strong></p>
+      <ul>
+        <li>admin (Администратор)</li>
+        <li>teacher (Преподаватель)</li>
+        <li>student (Ученик)</li>
+      </ul>
+      <p>Мониторинг системы и управление в разработке.</p>
+    </section>
+  </main>
+
+  <!-- Улучшенный футер -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>О платформе</h4>
+        <div class="footer-links">
+          <a href="#">О проекте</a>
+          <a href="#">Как пользоваться</a>
+          <a href="#">Политика конфиденциальности</a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Полезные ссылки</h4>
+        <div class="footer-links">
+          <a href="#">Методические рекомендации</a>
+          <a href="#">Образцы заданий</a>
+          <a href="#">Видеолекции</a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Социальные сети</h4>
+        
+        <div class="social-icons">
+          <a href="#">.VK</a>
+          <a href="#">.TG</a>
+          <a href="#">.YT</a>
+        </div>
+        <p style="margin-top: 1rem;">&copy; 2025 Платформа тестирования по математике</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Скрипты (без изменений) -->
+  <script>
+    // --- Данные пользователей ---
+    const users = [
+      { login: "close", password: "11111111", role: "student" },
+      { login: "user", password: "11111111", role: "teacher" },
+      { login: "admin", password: "11111111", role: "admin" }
+    ];
+    
+    // --- Вопросы теста (начальный набор) ---
+    let questions = [
+      {
+        text: "Чему равен 2 + 2?",
+        type: "single",
+        options: ["3", "4", "5"],
+        correct: ["4"]
+      },
+      {
+        text: "Выберите простые числа",
+        type: "multiple",
+        options: ["4", "5", "7", "9"],
+        correct: ["5", "7"]
+      },
+      {
+        text: "Чему равен корень из 9?",
+        type: "text",
+        options: [],
+        correct: ["3"]
+      }
+    ];
+    
+    let currentUser = null;
+    let userRole = null;
+    
+    // --- Функции переключения отображения панелей ---
+    function hideAllPanels() {
+      document.getElementById("home-block").classList.add("hidden");
+      document.getElementById("teacher-panel").classList.add("hidden");
+      document.getElementById("student-panel").classList.add("hidden");
+      document.getElementById("result-panel").classList.add("hidden");
+      document.getElementById("reference-panel").classList.add("hidden");
+      document.getElementById("admin-panel").classList.add("hidden");
+    }
+    
+    function showHome() {
+      hideAllPanels();
+      document.getElementById("home-block").classList.remove("hidden");
+    }
+    
+    function showTestPanel() {
+      hideAllPanels();
+      if (!currentUser) {
+        alert("Пожалуйста, войдите в систему, чтобы пройти тест.");
+        return;
+      }
+      if(userRole === "teacher") {
+        document.getElementById("teacher-panel").classList.remove("hidden");
+      } else if (userRole === "student") {
+        document.getElementById("student-panel").classList.remove("hidden");
+      } else if (userRole === "admin") {
+        alert("Администратор не проходит тесты.");
+        showAdminPanel();
+      }
+    }
+    
+    function showReferenceMaterial() {
+      hideAllPanels();
+      document.getElementById("reference-panel").classList.remove("hidden");
+    }
+    
+    function showAdminPanel() {
+      if (userRole !== "admin") {
+        alert("Доступ запрещён. Требуется роль администратора.");
+        return;
+      }
+      hideAllPanels();
+      document.getElementById("admin-panel").classList.remove("hidden");
+    }
+    
+    // --- Вход ---
+    function toggleLoginPopup() {
+      const popup = document.getElementById("login-popup");
+      popup.classList.toggle("hidden");
+    }
+    
+    function loginUser() {
+      const login = document.getElementById("login").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const user = users.find(u => u.login === login && u.password === password);
+      
+      if (user) {
+        currentUser = user.login;
+        userRole = user.role;
+        alert(`Добро пожаловать, ${currentUser}! Ваша роль: ${userRole}`);
+        toggleLoginPopup();
+        document.getElementById("login").value = "";
+        document.getElementById("password").value = "";
+        
+        // Обновляем кнопку "Вход"
+        const loginBtn = document.querySelector(".login-btn");
+        loginBtn.textContent = "Выход";
+        loginBtn.onclick = logoutUser;
+        
+        // Показываем нужную панель
+        if(userRole === "admin") {
+          showAdminPanel();
+        } else {
+          showTestPanel();
+        }
+      } else {
+        alert("Неверный логин или пароль.");
+      }
+    }
+    
+    function logoutUser() {
+      currentUser = null;
+      userRole = null;
+      const loginBtn = document.querySelector(".login-btn");
+      loginBtn.textContent = "Вход";
+      loginBtn.onclick = toggleLoginPopup;
+      showHome();
+      alert("Вы вышли из системы");
+    }
+    
+    // --- Преподаватель добавляет вопрос ---
+    function addQuestion() {
+      const text = document.getElementById("question-text").value.trim();
+      const type = document.getElementById("question-type").value;
+      const optionsStr = document.getElementById("answer-options").value.trim();
+      const correctStr = document.getElementById("correct-answer").value.trim();
+      
+      if (!text) {
+        alert("Введите текст вопроса.");
+        return;
+      }
+      
+      let options = optionsStr ? optionsStr.split(";").map(s => s.trim()).filter(Boolean) : [];
+      let correct = correctStr ? correctStr.split(";").map(s => s.trim()) : [];
+      
+      if(type !== "text" && options.length === 0) {
+        alert("Введите варианты ответов через ';'");
+        return;
+      }
+      
+      if(correct.length === 0) {
+        alert("Введите правильный ответ (или ответы через ';')");
+        return;
+      }
+      
+      questions.push({ text, type, options, correct });
+      alert("Вопрос добавлен!");
+      document.getElementById("question-text").value = "";
+      document.getElementById("answer-options").value = "";
+      document.getElementById("correct-answer").value = "";
+      refreshQuestionList();
+    }
+    
+    function refreshQuestionList() {
+      const ul = document.getElementById("question-list");
+      ul.innerHTML = "";
+      questions.forEach((q, i) => {
+        const li = document.createElement("li");
+        li.textContent = `${i+1}. ${q.text} (${q.type})`;
+        ul.appendChild(li);
+      });
+    }
+    
+    // --- Студент начинает тест ---
+    function startTest() {
+      let num = parseInt(document.getElementById("num-questions").value);
+      if(isNaN(num) || num < 1) num = 1;
+      if(num > questions.length) num = questions.length;
+      let shuffle = document.getElementById("shuffle-questions").checked;
+      let testQs = [...questions];
+      
+      if(shuffle) {
+        testQs.sort(() => Math.random() - 0.5);
+      }
+      
+      testQs = testQs.slice(0, num);
+      
+      const container = document.getElementById("test-questions");
+      container.innerHTML = "";
+      
+      testQs.forEach((q, i) => {
+        const div = document.createElement("div");
+        div.classList.add("question");
+        div.dataset.index = i;
+        let html = `<h3>Вопрос ${i+1}: ${q.text}</h3>`;
+        
+        if(q.type === "single") {
+          html += `<ul>`;
+          q.options.forEach((opt, idx) => {
+            const id = `q${i}_opt${idx}`;
+            html += `<li><label><input type="radio" name="q${i}" value="${opt}" id="${id}"> ${opt}</label></li>`;
+          });
+          html += `</ul>`;
+        } else if(q.type === "multiple") {
+          html += `<ul>`;
+          q.options.forEach((opt, idx) => {
+            const id = `q${i}_opt${idx}`;
+            html += `<li><label><input type="checkbox" name="q${i}" value="${opt}" id="${id}"> ${opt}</label></li>`;
+          });
+          html += `</ul>`;
+        } else if(q.type === "text") {
+          html += `<input type="text" name="q${i}" placeholder="Ваш ответ" />`;
+        }
+        
+        div.innerHTML = html;
+        container.appendChild(div);
+      });
+      
+      document.getElementById("test-form").classList.remove("hidden");
+      document.getElementById("test-config").classList.add("hidden");
+      window.currentTestQuestions = testQs;
+    }
+    
+    function submitTest() {
+      const testQs = window.currentTestQuestions || [];
+      let correctCount = 0;
+      
+      for(let i=0; i<testQs.length; i++) {
+        const q = testQs[i];
+        let userAnswer = [];
+        
+        if(q.type === "single") {
+          const radios = document.querySelectorAll(`input[name="q${i}"]:checked`);
+          radios.forEach(r => userAnswer.push(r.value));
+        } else if(q.type === "multiple") {
+          const checkboxes = document.querySelectorAll(`input[name="q${i}"]:checked`);
+          checkboxes.forEach(c => userAnswer.push(c.value));
+        } else if(q.type === "text") {
+          const input = document.querySelector(`input[name="q${i}]`);
+          if(input && input.value.trim() !== "") {
+            userAnswer.push(input.value.trim());
+          }
+        }
+        
+        let correctAnswersNormalized = q.correct.map(a => a.toLowerCase());
+        let userAnswersNormalized = userAnswer.map(a => a.toLowerCase());
+        
+        if(q.type === "text") {
+          if(userAnswersNormalized.some(ans => correctAnswersNormalized.includes(ans))) {
+            correctCount++;
+          }
+        } else {
+          correctAnswersNormalized.sort();
+          userAnswersNormalized.sort();
+          if(JSON.stringify(correctAnswersNormalized) === JSON.stringify(userAnswersNormalized)) {
+            correctCount++;
+          }
+        }
+      }
+      
+      hideAllPanels();
+      document.getElementById("result-panel").classList.remove("hidden");
+      document.getElementById("test-result").textContent = `Вы ответили правильно на ${correctCount} из ${testQs.length} вопросов.`;
+    }
+    
+    // --- Слайдер ---
+    const sliderImages = document.querySelectorAll("#slider img");
+    const sliderControlsContainer = document.getElementById("slider-controls");
+    let currentSlide = 0;
+    
+    function showSlide(n) {
+      sliderImages.forEach((img, i) => {
+        img.classList.toggle("active", i === n);
+      });
+      
+      const buttons = sliderControlsContainer.querySelectorAll("button");
+      buttons.forEach((btn, i) => {
+        btn.classList.toggle("active", i === n);
+      });
+      currentSlide = n;
+    }
+    
+    function nextSlide() {
+      let next = (currentSlide + 1) % sliderImages.length;
+      showSlide(next);
+    }
+    
+    function createSliderControls() {
+      for(let i = 0; i < sliderImages.length; i++) {
+        const btn = document.createElement("button");
+        btn.addEventListener("click", () => showSlide(i));
+        if(i === 0) btn.classList.add("active");
+        sliderControlsContainer.appendChild(btn);
+      }
+    }
+    
+    // Инициализация при загрузке страницы
+    document.addEventListener("DOMContentLoaded", function() {
+      createSliderControls();
+      setInterval(nextSlide, 5000);
+      
+      // Инициализация кнопки входа
+      const loginBtn = document.querySelector(".login-btn");
+      loginBtn.onclick = toggleLoginPopup;
+    });
+  </script>
+</body>
+</html>
